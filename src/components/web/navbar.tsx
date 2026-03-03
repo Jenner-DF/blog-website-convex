@@ -1,10 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { buttonVariants } from "../ui/button";
-import ThemeToggle from "./themeToggle";
+import { Button, buttonVariants } from "../ui/button";
+import ThemeToggle from "./ThemeToggle";
+import { authClient } from "@/lib/auth-client";
+import { api } from "../../../convex/_generated/api";
+import { useConvexAuth } from "convex/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+  const { isAuthenticated, isLoading } = useConvexAuth(); // FOR CLIENT COMPONENTS
+  const router = useRouter();
   return (
     <nav className="w-full py-5 flex  items-center  justify-between">
       <div className="flex items-center  gap-8">
@@ -29,15 +36,38 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Link href={"/auth/sign-up"} className={buttonVariants()}>
-          Sign up
-        </Link>
-        <Link
-          href={"/auth/login"}
-          className={buttonVariants({ variant: "outline" })}
-        >
-          Login
-        </Link>
+        {isLoading ? null : isAuthenticated ? (
+          <Button
+            variant={"ghost"}
+            onClick={() =>
+              authClient.signOut({
+                fetchOptions: {
+                  onSuccess: () => {
+                    toast.success("Logged out successfully");
+                    router.push("/");
+                  },
+                  onError: (e) => {
+                    toast.error(e.error.message);
+                  },
+                },
+              })
+            }
+          >
+            Logout
+          </Button>
+        ) : (
+          <>
+            <Link href={"/auth/sign-up"} className={buttonVariants()}>
+              Sign up
+            </Link>
+            <Link
+              href={"/auth/login"}
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Login
+            </Link>
+          </>
+        )}
 
         <ThemeToggle />
       </div>
