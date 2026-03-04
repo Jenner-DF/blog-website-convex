@@ -9,7 +9,7 @@ export default async function Home() {
       <p>
         <code>{JSON.stringify(asd)}</code>
       </p>
-      <Test />
+      {/* <Test /> */}
     </main>
   );
 }

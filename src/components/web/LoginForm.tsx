@@ -19,10 +19,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-const formSchema = z.object({
-  email: z.email("Invalid email address"),
-  password: z.string().min(2, "min 2"),
-});
+import { formLoginSchema } from "@/app/schemas/auth";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -32,8 +29,8 @@ export default function LoginForm() {
       email: "",
       password: "",
     },
-    validators: { onSubmit: formSchema },
-    onSubmit: async ({ value }: { value: z.infer<typeof formSchema> }) => {
+    validators: { onSubmit: formLoginSchema },
+    onSubmit: async ({ value }: { value: z.infer<typeof formLoginSchema> }) => {
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
       await authClient.signIn.email(

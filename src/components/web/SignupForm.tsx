@@ -19,17 +19,8 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-const formSchema = z
-  .object({
-    username: z.string().min(2, "min 2 chars").max(10, "max 10 chars only"),
-    email: z.email("Invalid email address"),
-    password: z.string().min(2, "min 2"),
-    confirm: z.string().min(1, "Please confirm your password"),
-  })
-  .refine((data) => data.password === data.confirm, {
-    message: "Passwords don't match",
-    path: ["confirm"],
-  });
+import { formSignupSchema } from "@/app/schemas/auth";
+
 export default function SignUpForm() {
   const router = useRouter();
   const form = useForm({
@@ -39,8 +30,12 @@ export default function SignUpForm() {
       password: "",
       confirm: "",
     },
-    validators: { onSubmit: formSchema },
-    onSubmit: async ({ value }: { value: z.infer<typeof formSchema> }) => {
+    validators: { onSubmit: formSignupSchema },
+    onSubmit: async ({
+      value,
+    }: {
+      value: z.infer<typeof formSignupSchema>;
+    }) => {
       await authClient.signUp.email(
         {
           email: value.email,
