@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
       {
         hostname: "picsum.photos",
       },
+      {
+        hostname: "tough-starling-553.convex.cloud",
+      },
     ],
   },
 };

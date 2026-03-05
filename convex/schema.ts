@@ -7,5 +7,13 @@ export default defineSchema({
     title: v.string(),
     body: v.string(),
     authorId: v.string(), // ✅ matches what getAuthUser() actually returns
+    authorName: v.string(),
+    imageId: v.optional(v.id("_storage")),
   }).index("by_author", ["authorId"]),
+  comments: defineTable({
+    postId: v.id("posts"),
+    authorId: v.string(),
+    authorName: v.string(),
+    body: v.string(),
+  }),
 });

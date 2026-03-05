@@ -13,24 +13,28 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm, useStore } from "@tanstack/react-form";
-import { useMutation } from "convex/react";
-import z from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { api } from "../../../convex/_generated/api";
+import { useCreateBlogPost } from "@/lib/hooks/use-upload-post";
+import Image from "next/image";
+import { useState } from "react";
 
 export default function CreateBlogPostForm() {
-  const createBlogPost = useMutation(api.posts.createBlogPost);
+  const { mutation: createBlogPost } = useCreateBlogPost();
+  const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
+
   const form = useForm({
     defaultValues: {
       title: "",
       body: "",
+      image: undefined as File | undefined,
     },
+
     validators: { onSubmit: formBlogPostSchema },
-    onSubmit: ({ value: { title, body } }) => {
-      const promise = createBlogPost({ title, body });
+    onSubmit: ({ value: { title, body, image } }) => {
+      const promise = createBlogPost({ title, body, image });
       //this will not run twice! but will only listen
       toast.promise(promise, {
         loading: "Creating blog...",
@@ -45,10 +49,11 @@ export default function CreateBlogPostForm() {
         error: () => "Failed to create blog",
       });
 
-      return promise; // ✅ THIS IS THE KEY
+      return promise; // waits for the promise to finish = isSubmitting
     },
   });
   const isSubmitting = useStore(form.store, (s) => s.isSubmitting);
+  // const image = useStore(form.store, (state) => state.values.image);
 
   return (
     // border border-dashed border-yellow-500
@@ -118,16 +123,94 @@ export default function CreateBlogPostForm() {
                   );
                 }}
               </form.Field>
-              <Button className="w-full " disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating
-                    Blog Post...
-                  </>
-                ) : (
-                  "Create Post"
+              {/* <form.Subscribe selector={(s) => s.values.image}>
+                {(image) => {
+                  const prevw = image ? URL.createObjectURL(image) : null;
+                  return prevw ? (
+                    <div className="relative w-full h-48 rounded-md overflow-hidden">
+                      <Image
+                        src={prevw}
+                        alt="preview"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                  ) : null;
+                }}
+              </form.Subscribe> */}
+              <form.Field name="image">
+                {(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>
+                        Image (optional)
+                      </FieldLabel>
+
+                      {preview && (
+                        <div className="relative w-full h-48 rounded-md overflow-hidden">
+                          <Image
+                            src={preview}
+                            alt="preview"
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                      )}
+                      {/* {field.state.value && (
+                        <div className="relative w-full h-48 rounded-md overflow-hidden">
+                          <Image
+                            src={URL.createObjectURL(field.state.value)}
+                            alt="preview"
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                      )} */}
+                      <Input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        id={field.name}
+                        name={field.name}
+                        onBlur={field.handleBlur}
+                        // onChange={(e) => {
+                        //   const file = e.target.files?.[0];
+                        //   console.log("before", e.target.value);
+                        //   e.target.value = ""; // reset so same file triggers change
+                        //   console.log("after", e.target.value);
+                        //   setPreview(file ? URL.createObjectURL(file) : null);
+                        //   field.handleChange(file);
+                        // }}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          field.handleChange(file);
+                          setPreview(file ? URL.createObjectURL(file) : null);
+                        }}
+                        aria-invalid={isInvalid}
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  );
+                }}
+              </form.Field>
+              <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
+                {([canSubmit, isSubmitting]) => (
+                  <Button
+                    type="submit"
+                    disabled={!canSubmit || isSubmitting}
+                    className="my-4 ml-auto block"
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Create Post"
+                    )}
+                  </Button>
                 )}
-              </Button>
+              </form.Subscribe>
             </FieldSet>
           </form>
         </CardContent>
