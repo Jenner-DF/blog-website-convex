@@ -1,10 +1,18 @@
 import { FunctionReturnType } from "convex/server";
 import Image from "next/image";
 import { api } from "../../../convex/_generated/api";
+import { Card } from "../ui/card";
+import PostPresence from "./PostPresence";
 
 type BlogPostType = FunctionReturnType<typeof api.posts.getBlogPostById>;
 
-export default async function BlogPost({ post }: { post: BlogPostType }) {
+export default async function BlogPost({
+  post,
+  userId,
+}: {
+  post: BlogPostType;
+  userId: string;
+}) {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <article>
@@ -34,6 +42,7 @@ export default async function BlogPost({ post }: { post: BlogPostType }) {
             </p>
           </div>
         </div>
+        <PostPresence postId={post._id} userId={userId} />
 
         {/* Body */}
         <div className="px-4 ">

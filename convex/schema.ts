@@ -9,7 +9,10 @@ export default defineSchema({
     authorId: v.string(), // ✅ matches what getAuthUser() actually returns
     authorName: v.string(),
     imageId: v.optional(v.id("_storage")),
-  }).index("by_author", ["authorId"]),
+  })
+    .index("by_author", ["authorId"])
+    .searchIndex("search_title", { searchField: "title" })
+    .searchIndex("search_body", { searchField: "body" }),
   comments: defineTable({
     postId: v.id("posts"),
     authorId: v.string(),

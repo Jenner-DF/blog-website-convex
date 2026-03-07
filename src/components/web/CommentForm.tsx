@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { Textarea } from "../ui/textarea";
@@ -27,6 +26,7 @@ export default function CommentForm() {
   const { postId } = useParams<{ postId: Id<"posts"> }>();
 
   const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
   const createComment = useMutation(api.comments.createComment);
 
   const form = useForm({
@@ -46,10 +46,6 @@ export default function CommentForm() {
       return promise; // ✅ isSubmitting stays true until done
     },
   });
-  //add middleware!
-  if (!session) return "";
-
-  const { user } = session; // Now 'user' is guaranteed to exist
 
   if (isPending)
     return (
@@ -58,6 +54,8 @@ export default function CommentForm() {
         <Skeleton className="h-8 flex-1" />
       </div>
     );
+
+  if (!user) return null; //add a button redirect to login
 
   return (
     <div className="flex gap-3 items-start mt-8">

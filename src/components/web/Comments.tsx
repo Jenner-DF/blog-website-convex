@@ -10,11 +10,12 @@ export default function CommentsSection({
 }: {
   preloadedComments: Preloaded<typeof api.comments.getCommentsByPost>;
 }) {
-  const { postId } = useParams<{ postId: Id<"posts"> }>();
+  const postComments = usePreloadedQuery(preloadedComments);
+
+  // const { postId } = useParams<{ postId: Id<"posts"> }>();
   // const postComments = useQuery(api.comments.getCommentsByPost, {
   //   postId,
   // });
-  const postComments = usePreloadedQuery(preloadedComments);
   return (
     <div className="flex flex-col w-full">
       <div>

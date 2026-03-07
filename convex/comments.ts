@@ -10,7 +10,14 @@ export const getCommentsByPost = query({
       .filter((q) => q.eq(q.field("postId"), args.postId))
       .order("desc")
       .collect();
-
+    //then i want the updated auth name and pic (in case he changed) by just posts.author.img but this does not work because nosql
+    //we need to have the reference ONLY in a separate table but in convex ('users' table)
+    //then we again query and filter only the USERS WHO COMMENTED
+    //we now have the array of posts, and users
+    //join the 2 array where post.authorId = user.id
+    //const addAuthorToPost = posts.map(post => {...post,  {...users.find(user => user.id === post.id)} })
+    //return the new array
+    //then I found its  NoSQL, read the docs!, no joins, must create  users table if u want to
     return posts;
   },
 });
