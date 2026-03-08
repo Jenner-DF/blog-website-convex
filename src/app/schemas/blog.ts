@@ -1,4 +1,5 @@
 import z from "zod";
+import { Id } from "../../../convex/_generated/dataModel";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -14,4 +15,8 @@ export const formBlogPostSchema = z.object({
       "Only .jpg, .png, and .webp formats are supported",
     )
     .or(z.undefined()),
+});
+
+export const updateFormBlogPostSchema = formBlogPostSchema.extend({
+  postId: z.custom<Id<"posts">>(), //we manual check again in the db so its safe
 });

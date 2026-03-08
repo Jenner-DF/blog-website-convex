@@ -3,6 +3,8 @@ import { v } from "convex/values";
 import { authComponent } from "./betterAuth/auth";
 import { Doc } from "./_generated/dataModel";
 import { title } from "process";
+import { paginationOptsValidator } from "convex/server";
+import { api } from "./_generated/api";
 //v is like zod z.string()...
 
 // interface SearchResultType {
@@ -78,6 +80,25 @@ export const createBlogPost = mutation({
   },
 });
 
+export const updateBlogPost = mutation({
+  args: {
+    postId: v.id("posts"),
+    title: v.string(),
+    body: v.string(),
+    imageId: v.optional(v.id("_storage")),
+  },
+  handler: async (ctx, { postId, title, body, imageId }) => {
+    const user = await authComponent.getAuthUser(ctx); //auto throws error
+    const post = await ctx.db.get("posts", postId);
+    if (!post) throw new Error("Post not found");
+    if (user._id !== (post?.authorId as string))
+      throw new Error("Unauthorized");
+
+    //cant call genereateuploadurl, it must become like hook
+    await ctx.db.patch("posts", post._id, { title, body, imageId });
+  },
+});
+
 export const getBlogPostById = query({
   args: { postId: v.id("posts") },
   async handler(ctx, args) {
@@ -98,6 +119,7 @@ export const getBlogPosts = query({
   async handler(ctx) {
     const posts = await ctx.db.query("posts").order("desc").collect();
 
+    //map is not sequential, executes all at once
     return Promise.all(
       posts.map(async (post) => ({
         ...post,
@@ -108,6 +130,63 @@ export const getBlogPosts = query({
   },
 });
 
+// export const getBlogPostsByUser = query({
+//   args: { userId: v.string() },
+//   async handler(ctx, args) {
+//     console.log("USER KO TO", args.userId);
+//     const posts = await ctx.db
+//       .query("posts")
+//       .withIndex("by_author", (q) => q.eq("authorId", args.userId))
+//       .collect();
+//     if (!posts) throw new Error("No post found");
+//     console.log(
+//       "POSTS KO TO",
+//       JSON.stringify(posts.map((post) => post.authorId).join(" ,")),
+//     );
+//     //map is not sequential, executes all at once
+//     return Promise.all(
+//       posts.map(async (post) => ({
+//         ...post,
+//         imageId: post.imageId ? await ctx.storage.getUrl(post.imageId) : null,
+//       })),
+//     );
+//     // return {...posts, };
+//   },
+// });
+
+export const deleteBlogPostById = mutation({
+  args: { postId: v.id("posts") },
+  async handler(ctx, { postId }) {
+    const user = await authComponent.getAuthUser(ctx); //auto throws error
+    const post = await ctx.db.get("posts", postId);
+    if (!post) throw new Error("Post not found");
+    if (user._id !== (post?._id as string)) throw new Error("Unauthorized");
+    await ctx.db.delete("posts", postId);
+  },
+});
+
+export const getBlogPaginatedPosts = query({
+  args: {
+    userId: v.optional(v.string()),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, { paginationOpts, userId }) => {
+    const query = userId
+      ? ctx.db
+          .query("posts")
+          .withIndex("by_author", (q) => q.eq("authorId", userId)) //  filter by user
+      : ctx.db.query("posts").order("desc"); // all posts
+
+    const posts = await query.paginate(paginationOpts);
+    const postsWithImage = await Promise.all(
+      posts.page.map(async (post) => ({
+        ...post,
+        imageId: post.imageId ? await ctx.storage.getUrl(post.imageId) : null,
+      })),
+    );
+    return { ...posts, page: postsWithImage };
+  },
+});
 //IMAGE upload
 //part 1 - generate upload url
 export const generateImageUploadUrl = mutation({

@@ -1,5 +1,8 @@
 "use client";
-import { formBlogPostSchema } from "@/app/schemas/blog";
+import {
+  formBlogPostSchema,
+  updateFormBlogPostSchema,
+} from "@/app/schemas/blog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -16,25 +19,31 @@ import { useForm, useStore } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { useCreateBlogPost } from "@/lib/hooks/use-upload-post";
 import Image from "next/image";
 import { useState } from "react";
+import { Id } from "../../../convex/_generated/dataModel";
+import { useUpdateBlogPost } from "@/lib/hooks/use-update-post";
 
-export default function CreateBlogPostForm() {
-  const { mutation: createBlogPost } = useCreateBlogPost();
+export default function UpdateBlogPostForm({
+  postId,
+}: {
+  postId: Id<"posts">;
+}) {
+  const { mutation: updateBlogPost } = useUpdateBlogPost();
   const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
 
   const form = useForm({
     defaultValues: {
+      postId: postId as Id<"posts">,
       title: "",
       body: "",
       image: undefined as File | undefined,
     },
 
-    validators: { onSubmit: formBlogPostSchema },
-    onSubmit: ({ value: { title, body, image } }) => {
-      const promise = createBlogPost({ title, body, image });
+    validators: { onSubmit: updateFormBlogPostSchema },
+    onSubmit: ({ value: { title, body, image, postId } }) => {
+      const promise = updateBlogPost({ postId, title, body, image });
       //this will not run twice! but will only listen
       toast.promise(promise, {
         loading: "Creating blog...",
@@ -206,7 +215,7 @@ export default function CreateBlogPostForm() {
                     {isSubmitting ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      "Create Post"
+                      "Update Post"
                     )}
                   </Button>
                 )}
