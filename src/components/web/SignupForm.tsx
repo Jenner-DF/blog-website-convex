@@ -16,13 +16,15 @@ import { useForm, useStore } from "@tanstack/react-form";
 import z from "zod";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { formSignupSchema } from "@/app/schemas/auth";
 
 export default function SignUpForm() {
   const router = useRouter();
+  const searchparams = useSearchParams();
+  const callbackUrl = searchparams.get("callbackUrl") || "/";
   const form = useForm({
     defaultValues: {
       username: "",
@@ -46,7 +48,8 @@ export default function SignUpForm() {
         {
           onSuccess: (ctx) => {
             toast.success(`Account created for ${ctx.data.user.name}!`);
-            router.push("/");
+            router.refresh();
+            router.push(callbackUrl);
           },
           onError: (ctx) => {
             toast.error(ctx.error.message || "An error occured");

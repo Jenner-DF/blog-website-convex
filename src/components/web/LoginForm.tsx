@@ -45,6 +45,7 @@ export default function LoginForm() {
         {
           onSuccess: (ctx) => {
             toast.success(`Welcome back ${ctx.data.user.name}!`);
+            router.refresh();
             router.push(callbackUrl);
           },
           onError: (ctx) => {

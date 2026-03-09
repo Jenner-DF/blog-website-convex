@@ -32,7 +32,7 @@ export default async function LandingPage() {
             presence, full-text search, and a community that listens.
           </p>
           <div className="flex gap-3 items-center justify-center md:justify-normal ">
-            <Link href="/auth/login">
+            <Link href="/create">
               <Button size="lg" className="gap-2">
                 Start Writing <PenLine className="size-4" />
               </Button>
