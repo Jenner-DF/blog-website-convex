@@ -16,13 +16,15 @@ import { useForm, useStore } from "@tanstack/react-form";
 import z from "zod";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { formLoginSchema } from "@/app/schemas/auth";
 
 export default function LoginForm() {
   const router = useRouter();
+  // Get the callbackUrl, or default to home "/"
+  const callbackUrl = useSearchParams().get("callbackUrl") || "/";
 
   const form = useForm({
     defaultValues: {
@@ -42,7 +44,7 @@ export default function LoginForm() {
         {
           onSuccess: (ctx) => {
             toast.success(`Welcome back ${ctx.data.user.name}!`);
-            router.push("/");
+            router.push(callbackUrl);
           },
           onError: (ctx) => {
             toast.error(ctx.error.message || "Failed to sign in");

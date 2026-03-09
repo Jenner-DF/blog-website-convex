@@ -11,9 +11,11 @@ export async function proxy(req: NextRequest) {
   if (user && isAuthPage) {
     return NextResponse.redirect(new URL("/", req.url));
   }
-
-  if (!user) {
-    return NextResponse.redirect(new URL("/auth/login", req.url));
+  //if  only !user it will loop, as it enter again the /auth
+  if (!user && !isAuthPage) {
+    const url = new URL("/auth/login", req.url);
+    url.searchParams.set("callbackUrl", req.nextUrl.pathname);
+    return NextResponse.redirect(url);
   }
   return NextResponse.next();
 }
