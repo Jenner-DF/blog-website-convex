@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm, useStore } from "@tanstack/react-form";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useCreateBlogPost } from "@/lib/hooks/use-upload-post";
 import Image from "next/image";
@@ -22,6 +22,8 @@ import { useState } from "react";
 export default function CreateBlogPostForm() {
   const { mutation: createBlogPost } = useCreateBlogPost();
   const [preview, setPreview] = useState<string | null>(null);
+  const searchparams = useSearchParams();
+  const callbackUrl = searchparams.get("callbackUrl") || "/";
   const router = useRouter();
   const form = useForm({
     defaultValues: {
@@ -37,7 +39,8 @@ export default function CreateBlogPostForm() {
       toast.promise(promise, {
         loading: "Creating blog...",
         success: () => {
-          router.push("/blog");
+          router.refresh(); //refresh to get auth cookie
+          router.push(callbackUrl);
           return (
             <span>
               Your blog <strong>{title}</strong> has been created!

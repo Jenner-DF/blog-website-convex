@@ -24,7 +24,8 @@ import { formLoginSchema } from "@/app/schemas/auth";
 export default function LoginForm() {
   const router = useRouter();
   // Get the callbackUrl, or default to home "/"
-  const callbackUrl = useSearchParams().get("callbackUrl") || "/";
+  const searchparams = useSearchParams();
+  const callbackUrl = searchparams.get("callbackUrl") || "/";
 
   const form = useForm({
     defaultValues: {
