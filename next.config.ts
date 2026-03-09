@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
       {
         hostname: "tough-starling-553.convex.cloud",
       },
+      {
+        hostname: "disciplined-sandpiper-196.convex.cloud",
+        protocol: "https",
+      },
     ],
   },
 };
