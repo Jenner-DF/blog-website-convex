@@ -166,7 +166,7 @@ export default async function LandingPage() {
           Every great writer was once a beginner with nothing but an empty page
           and something to say.
         </p>
-        <Link href="/auth/login">
+        <Link href="/create">
           <Button size="lg" className="gap-2">
             Begin Your Story <ArrowRight className="size-4" />
           </Button>
