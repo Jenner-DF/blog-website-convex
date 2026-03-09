@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { api } from "../../../convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Id } from "../../../convex/_generated/dataModel";
-import { Field, FieldError, FieldGroup } from "../ui/field";
+import { Field, FieldError } from "../ui/field";
 import { Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
 

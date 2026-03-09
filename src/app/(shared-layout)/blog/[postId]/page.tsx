@@ -1,4 +1,4 @@
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 import { fetchQuery, preloadQuery } from "convex/nextjs";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
@@ -24,8 +24,7 @@ export default async function BlogPostPage({
 }) {
   const { postId } = await params;
   //preload can promise.all
-  const [post, preloadedComments, userId] = await Promise.all([
-    fetchQuery(api.posts.getBlogPostById, { postId }),
+  const [preloadedComments, userId] = await Promise.all([
     preloadQuery(api.comments.getCommentsByPost, {
       postId: postId,
     }),
@@ -33,11 +32,10 @@ export default async function BlogPostPage({
   ]);
   //in ts it shows Id<'user'> but its Id<'account'> fuck this shit, idk anymore ,but there is no user table its a betterauth! update: ITS THE CONVEX PROBLEM FUCK THAT SHIT IM NOT USING CONVEX AGAIN(or maybe i will)
   if (!userId) return redirect("/auth/login");
-  if (!post) return <div>No post found. go back</div>;
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <div>
-        <BlogPost post={post} userId={userId}></BlogPost>
+        <BlogPost userId={userId} />
       </div>
       <Separator className="my-8" />
       <div>

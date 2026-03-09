@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function BlogsListSkeleton() {
   return (
     // MATCH THE GRID CLASSES FROM YOUR page.tsx EXACTLY
-    <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+    <>
       {/* {Array.from({length:8}).map()} */}
       {[...Array(8)].map((_, i) => (
         <Card
@@ -28,6 +28,6 @@ export function BlogsListSkeleton() {
           </CardContent>
         </Card>
       ))}
-    </div>
+    </>
   );
 }

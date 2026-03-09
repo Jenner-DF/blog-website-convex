@@ -95,17 +95,19 @@ export const updateBlogPost = mutation({
       throw new Error("Unauthorized");
 
     //cant call genereateuploadurl, it must become like hook
-    await ctx.db.patch("posts", post._id, { title, body, imageId });
+    await ctx.db.patch("posts", post._id, {
+      title,
+      body,
+      imageId: imageId ? imageId : post.imageId,
+    });
   },
 });
 
 export const getBlogPostById = query({
   args: { postId: v.id("posts") },
   async handler(ctx, args) {
-    const post = await ctx.db
-      .query("posts")
-      .withIndex("by_id", (q) => q.eq("_id", args.postId))
-      .unique();
+    const post = await ctx.db.get(args.postId);
+
     if (!post) throw new Error("No post found");
     return {
       ...post,
@@ -115,9 +117,11 @@ export const getBlogPostById = query({
 });
 
 export const getBlogPosts = query({
-  args: {},
-  async handler(ctx) {
-    const posts = await ctx.db.query("posts").order("desc").collect();
+  args: { limit: v.optional(v.number()) },
+  async handler(ctx, { limit }) {
+    const posts = limit
+      ? await ctx.db.query("posts").order("desc").take(limit)
+      : await ctx.db.query("posts").order("desc").collect();
 
     //map is not sequential, executes all at once
     return Promise.all(

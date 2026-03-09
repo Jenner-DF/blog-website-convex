@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { api } from "../../../../convex/_generated/api";
-import { preloadQuery } from "convex/nextjs";
 import BlogsList from "@/components/web/BlogsList";
 import { Suspense } from "react";
 import { BlogsListSkeleton } from "@/components/web/BlogsListSkeleton";
 
 export const metadata: Metadata = {
-  title: "Blog | Using Convex",
+  title: "Our Blogs",
   description: "Read our latest articles and updates",
   category: "Web development",
   authors: [{ name: "Jdefta" }],

@@ -18,5 +18,5 @@ export const formBlogPostSchema = z.object({
 });
 
 export const updateFormBlogPostSchema = formBlogPostSchema.extend({
-  postId: z.custom<Id<"posts">>(), //we manual check again in the db so its safe
+  postId: z.custom<Id<"posts">>(),
 });

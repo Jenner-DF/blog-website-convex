@@ -6,12 +6,14 @@ import { Suspense } from "react";
 import { BlogsListSkeleton } from "@/components/web/BlogsListSkeleton";
 import { redirect } from "next/navigation";
 import { fetchAuthQuery } from "@/lib/auth-server";
+import { capitalize } from "radash";
 
-export const metadata: Metadata = {
-  title: "Blog | Using Convex",
-  description: "Read our latest articles and updates",
-  category: "Web development",
-  authors: [{ name: "Jdefta" }],
+export const generateMetadata = async () => {
+  const user = await fetchAuthQuery(api.auth.getUser);
+  if (!user) {
+    return { title: "Featured Blogs" };
+  }
+  return { title: `${capitalize(user.name)}'s Blogs` };
 };
 
 export default async function MyBlogPage() {
@@ -27,7 +29,7 @@ export default async function MyBlogPage() {
     <div className=" py-8">
       <div className="text-center space-y-2 mb-12 ">
         <h1 className="text-4xl font-extrabold sm:text-5xl tracking-tight">
-          {user.name}&apos;s Blog
+          {capitalize(user.name)}&apos;s Blog
         </h1>
         <p className="text-muted-foreground max-w-2xl  mx-auto text-xl">
           Insights, thoughts, and trends from you.

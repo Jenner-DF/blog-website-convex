@@ -1,7 +1,6 @@
 "use client";
 import { formBlogPostSchema } from "@/app/schemas/blog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   FieldLabel,
   FieldError,
@@ -24,7 +23,6 @@ export default function CreateBlogPostForm() {
   const { mutation: createBlogPost } = useCreateBlogPost();
   const [preview, setPreview] = useState<string | null>(null);
   const router = useRouter();
-
   const form = useForm({
     defaultValues: {
       title: "",
@@ -58,72 +56,66 @@ export default function CreateBlogPostForm() {
   return (
     // border border-dashed border-yellow-500
     <>
-      <Card className="max-w-xl mx-auto p-8">
-        <CardContent className="px-0">
-          <form
-            className="space-y-6"
-            onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              form.handleSubmit();
+      <form
+        className="space-y-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <FieldSet>
+          <FieldLegend>Create Blog Article </FieldLegend>
+          <FieldDescription> Create a new blog article</FieldDescription>
+        </FieldSet>
+        <FieldSet>
+          <form.Field name="title">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>Title</FieldLabel>
+                  <Input
+                    className="h-auto  py-4  font-bold md:text-xl"
+                    // className="h-auto py-4 text-4xl md:text-5xl font-bold border-none shadow-none focus-visible:ring-0 px-0"
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur} // Required for isTouched to work!
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={isInvalid}
+                    placeholder="Your blog title"
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
             }}
-          >
-            <FieldSet>
-              <FieldLegend>Create Blog Article </FieldLegend>
-              <FieldDescription> Create a new blog article</FieldDescription>
-            </FieldSet>
-            <FieldSet>
-              <form.Field name="title">
-                {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel htmlFor={field.name}>Title</FieldLabel>
-                      <Input
-                        className="h-auto  py-4 text-4xl font-bold md:text-xl"
-                        // className="h-auto py-4 text-4xl md:text-5xl font-bold border-none shadow-none focus-visible:ring-0 px-0"
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur} // Required for isTouched to work!
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        aria-invalid={isInvalid}
-                        placeholder="Your blog title"
-                      />
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  );
-                }}
-              </form.Field>
-              <form.Field name="body">
-                {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel htmlFor={field.name}>Content</FieldLabel>
-                      <Textarea
-                        className="min-h-[300px] leading-relaxed w-full py-4 text-4xl wrap-break-word resize-y"
-                        // className="h-auto py-4 text-4xl md:text-5xl font-bold border-none shadow-none focus-visible:ring-0 px-0"
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur} // Required for isTouched to work!
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        aria-invalid={isInvalid}
-                        placeholder={"Your blog content here..."}
-                      />
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  );
-                }}
-              </form.Field>
-              {/* <form.Subscribe selector={(s) => s.values.image}>
+          </form.Field>
+          <form.Field name="body">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>Content</FieldLabel>
+                  <Textarea
+                    className="min-h-[300px] leading-relaxed w-full py-4  wrap-break-word resize-y"
+                    // className="h-auto py-4 text-4xl md:text-5xl font-bold border-none shadow-none focus-visible:ring-0 px-0"
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur} // Required for isTouched to work!
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={isInvalid}
+                    placeholder={"Your blog content here..."}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+          {/* <form.Subscribe selector={(s) => s.values.image}>
                 {(image) => {
                   const prevw = image ? URL.createObjectURL(image) : null;
                   return prevw ? (
@@ -138,27 +130,25 @@ export default function CreateBlogPostForm() {
                   ) : null;
                 }}
               </form.Subscribe> */}
-              <form.Field name="image">
-                {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid;
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel htmlFor={field.name}>
-                        Image (optional)
-                      </FieldLabel>
+          <form.Field name="image">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>Image (optional)</FieldLabel>
 
-                      {preview && (
-                        <div className="relative w-full h-48 rounded-md overflow-hidden">
-                          <Image
-                            src={preview}
-                            alt="preview"
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
-                      )}
-                      {/* {field.state.value && (
+                  {preview && (
+                    <div className="relative w-full h-48 rounded-md overflow-hidden">
+                      <Image
+                        src={preview}
+                        alt="preview"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                  )}
+                  {/* {field.state.value && (
                         <div className="relative w-full h-48 rounded-md overflow-hidden">
                           <Image
                             src={URL.createObjectURL(field.state.value)}
@@ -168,53 +158,49 @@ export default function CreateBlogPostForm() {
                           />
                         </div>
                       )} */}
-                      <Input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        id={field.name}
-                        name={field.name}
-                        onBlur={field.handleBlur}
-                        // onChange={(e) => {
-                        //   const file = e.target.files?.[0];
-                        //   console.log("before", e.target.value);
-                        //   e.target.value = ""; // reset so same file triggers change
-                        //   console.log("after", e.target.value);
-                        //   setPreview(file ? URL.createObjectURL(file) : null);
-                        //   field.handleChange(file);
-                        // }}
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          field.handleChange(file);
-                          setPreview(file ? URL.createObjectURL(file) : null);
-                        }}
-                        aria-invalid={isInvalid}
-                      />
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  );
-                }}
-              </form.Field>
-              <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
-                {([canSubmit, isSubmitting]) => (
-                  <Button
-                    type="submit"
-                    disabled={!canSubmit || isSubmitting}
-                    className="my-4 ml-auto block w-full"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      "Create Post"
-                    )}
-                  </Button>
+                  <Input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    // onChange={(e) => {
+                    //   const file = e.target.files?.[0];
+                    //   console.log("before", e.target.value);
+                    //   e.target.value = ""; // reset so same file triggers change
+                    //   console.log("after", e.target.value);
+                    //   setPreview(file ? URL.createObjectURL(file) : null);
+                    //   field.handleChange(file);
+                    // }}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      field.handleChange(file);
+                      setPreview(file ? URL.createObjectURL(file) : null);
+                    }}
+                    aria-invalid={isInvalid}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+          <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
+            {([canSubmit, isSubmitting]) => (
+              <Button
+                type="submit"
+                disabled={!canSubmit || isSubmitting}
+                className="my-4 ml-auto block w-full"
+              >
+                {isSubmitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Create Post"
                 )}
-              </form.Subscribe>
-            </FieldSet>
-          </form>
-        </CardContent>
-      </Card>
+              </Button>
+            )}
+          </form.Subscribe>
+        </FieldSet>
+      </form>
     </>
   );
 }

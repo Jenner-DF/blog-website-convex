@@ -1,15 +1,12 @@
-import Test from "@/components/web/test";
-import { isAuthenticated } from "@/lib/auth-server";
+import LandingPage from "@/components/web/LandingPage";
+import { Metadata } from "next";
 
-export default async function Home() {
-  const asd = await isAuthenticated();
-  // const asd = await authClient.getSession(); FOR CLIENT COMPONENTS
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <p>
-        <code>{JSON.stringify(asd)}</code>
-      </p>
-      {/* <Test /> */}
-    </main>
-  );
+export const metadata: Metadata = {
+  title: "The Blog | Where Ideas Find Their Voice",
+  description:
+    "Write, publish, and share your stories with the world. Join our community of writers and readers today.",
+};
+
+export default async function HomePage() {
+  return <LandingPage />;
 }
