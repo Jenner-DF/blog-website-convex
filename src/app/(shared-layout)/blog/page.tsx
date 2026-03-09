@@ -30,6 +30,7 @@ export default function BlogPage() {
       <div>
         <Suspense fallback={<BlogsListSkeleton />}>
           {/* <Delay /> */}
+          {/* UNDEFINED = ALL USERS POSTS */}
           <BlogsList userId={undefined} />
         </Suspense>
       </div>

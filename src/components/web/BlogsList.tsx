@@ -11,6 +11,10 @@ import { useDebounce } from "use-debounce";
 import { BlogsListSkeleton } from "./BlogsListSkeleton";
 import { ArrowBigUp, ArrowRight } from "lucide-react";
 
+//split getting search results t (it does search and displaying blogs)
+//make search component and usestate in the blogslist and pass that in the search component
+//hard to display list because its 2 components
+//kaya mo na yan
 export default function BlogsList({
   userId = undefined,
   // preloadedPosts,
@@ -91,37 +95,40 @@ export default function BlogsList({
             <p>No posts found</p>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-            {displayPosts?.map((post) => (
-              <Link
-                href={`/blog/${post._id}`}
-                key={post._id}
-                className="contents"
-              >
-                <Card className="overflow-hidden py-0 gap-0 group cursor-pointer hover:shadow-md transition-all hover:-translate-y-0.5">
-                  <div className="relative w-full h-48 overflow-hidden">
-                    <Image
-                      src={post.imageId ?? "/bloglist-placeholder.svg"}
-                      alt={post.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <CardContent className="p-4 space-y-2">
-                    <p className="text-xs text-muted-foreground uppercase tracking-widest">
-                      {post.authorName}
-                    </p>
-                    <p className="font-bold leading-snug truncate">
-                      {post.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 pt-1">
-                      Read more <ArrowRight className="size-3" />
-                    </p>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-
+          // BLOGLIST SKELETON HAS ITS OWN  DIV THATS WHY ITS HARD TO RENDER
+          //or i can make  this into new comp
+          <>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+              {displayPosts?.map((post) => (
+                <Link
+                  href={`/blog/${post._id}`}
+                  key={post._id}
+                  className="contents"
+                >
+                  <Card className="overflow-hidden py-0 gap-0 group cursor-pointer hover:shadow-md transition-all hover:-translate-y-0.5">
+                    <div className="relative w-full h-48 overflow-hidden">
+                      <Image
+                        src={post.imageId ?? "/bloglist-placeholder.svg"}
+                        alt={post.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <CardContent className="p-4 space-y-2">
+                      <p className="text-xs text-muted-foreground uppercase tracking-widest">
+                        {post.authorName}
+                      </p>
+                      <p className="font-bold leading-snug truncate">
+                        {post.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1 pt-1">
+                        Read more <ArrowRight className="size-3" />
+                      </p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
             {/* invisible div at bottom — triggers loadMore when visible */}
 
             <div ref={bottomRef} className="h-1" />
@@ -143,7 +150,7 @@ export default function BlogsList({
                 </div>
               </div>
             )}
-          </div>
+          </>
         )}
       </>
     </>
